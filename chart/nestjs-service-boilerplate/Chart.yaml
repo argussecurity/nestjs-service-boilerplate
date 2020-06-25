@@ -1,0 +1,4 @@
+apiVersion: v1
+description: REST API NestJS based boilerplate project
+name: nestjs-service-boilerplate
+version: 0.0.1  # overridden in CI

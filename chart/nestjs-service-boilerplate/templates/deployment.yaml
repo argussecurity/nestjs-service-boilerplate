@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Chart.Name }}"
+  labels:
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      labels:
+        name: "{{ .Chart.Name }}"
+    spec:
+      containers:
+      - name: {{ .Chart.Name }}
+        image: "{{ .Values.image.registry }}/{{ .Values.image.namespace }}/{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.Version }}"
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        ports:
+        - name: http
+          containerPort: {{ .Values.port }}
+        env:
+        - name: PORT
+          value: {{ .Values.port | quote }}
+        - name: TYPEORM_CONNECTION
+          value: mysql
+        - name: TYPEORM_HOST
+          value: {{ .Values.app.mysql.host | quote }}
+        - name: TYPEORM_PORT
+          value: {{ .Values.app.mysql.port | quote }}
+        - name: TYPEORM_DATABASE
+          value: {{ .Values.app.mysql.database | quote }}
+        - name: TYPEORM_USERNAME
+{{ if .Values.app.mysql.username }}
+          value: {{ .Values.app.mysql.username | quote }}
+{{ else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.app.mysql.usernameSecret }}
+              key: {{ .Values.app.mysql.usernameSecretKey }}
+{{ end }}
+        - name: TYPEORM_PASSWORD
+{{ if .Values.app.mysql.password }}
+          value: {{ .Values.app.mysql.password | quote }}
+{{ else }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.app.mysql.passwordSecret }}
+              key: {{ .Values.app.mysql.passwordSecretKey }}
+{{ end }}
+        - name: LOG_LEVEL
+          value: {{ .Values.app.logLevel | quote }}
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.port }}
+          initialDelaySeconds: 5
+          timeoutSeconds: 10
+          periodSeconds: 30
+          failureThreshold: 6
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: {{ .Values.port }}
+        resources:
+{{ toYaml .Values.resources | indent 12 }}

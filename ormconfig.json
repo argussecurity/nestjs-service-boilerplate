@@ -1,0 +1,9 @@
+{
+    "type": "sqlite",
+    "database": "./cars.sqlite",
+    "entities": ["dist/**/*.entity{.ts,.js}"],
+    "migrations": ["dist/migrations/*.js"],
+    "cli": { "migrationsDir": "migrations" },
+    "migrationsRun": true,
+    "logging": "all"
+}

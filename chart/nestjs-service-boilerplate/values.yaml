@@ -1,0 +1,25 @@
+replicaCount: 1
+
+image:
+  registry: gcr.io
+  namespace: ns
+  name: rest-api-boilerplate
+  pullPolicy: IfNotPresent
+
+port: 80
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requestes:
+    cpu: 50m
+    memory: 128Mi
+
+app:
+  logLevel: info
+  mysql:
+    username: root
+    database: test
+    passwordSecret: mysql-pass
+    passwordSecretKey: password.txt
