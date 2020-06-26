@@ -134,7 +134,7 @@ Configuration for those resources exists in `values.yaml` file.
 Note that in order to run the chart, you need to have a secret with the password to mysql.
 Example:
 ```
-piVersion: v1
+apiVersion: v1
 kind: Secret
 metadata:
   name: mysql-pass
